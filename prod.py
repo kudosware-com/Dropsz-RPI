@@ -3,15 +3,17 @@ from imutils.video import VideoStream
 from pyzbar import pyzbar
 import imutils
 import requests
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import time
 import datetime
 from datetime import timedelta
 import socket
+import smtplib
+from email.message import EmailMessage
  
-# GPIO.setmode(GPIO.BOARD)
-# GPIO.setup(36,GPIO.OUT)
-# GPIO.output(36,GPIO.HIGH)
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(36,GPIO.OUT)
+GPIO.output(36,GPIO.HIGH)
  
 hostname = socket.gethostname()   
 IPAddr = socket.gethostbyname(hostname)
@@ -59,9 +61,9 @@ while True:
 
                         qrTrack[data][0] = "unsubscribed"
                         
-                        # GPIO.output(36,GPIO.LOW)
+                        GPIO.output(36,GPIO.LOW)
                         time.sleep(7)
-                        # GPIO.output(36,GPIO.HIGH)
+                        GPIO.output(36,GPIO.HIGH)
                         print('running  motor, unsubscribed user amount will be deducted')
                         data_to_be_sent["type"] = "unsubscribed"
                         data_to_be_sent["status"] = "success"
@@ -78,9 +80,9 @@ while True:
 
                         if qrTrack[data][1] == None or (datetime.datetime.now() - qrTrack[data][1]).total_seconds() > 300:
                             
-                            # GPIO.output(36,GPIO.LOW)
+                            GPIO.output(36,GPIO.LOW)
                             time.sleep(7)
-                            # GPIO.output(36,GPIO.HIGH)
+                            GPIO.output(36,GPIO.HIGH)
                             print('running motor, subscribed user no amount will be deducted')
                             data_to_be_sent["type"] = "subscribed"
                             data_to_be_sent["status"] = "success"
@@ -138,12 +140,12 @@ while True:
         try:
             s = smtplib.SMTP('smtp.gmail.com',587)
             s.starttls()
-            s.login("enquiry.infabrands@gmail.com","Pa$$@Enquiry")
+            s.login("email","password")
             msg = EmailMessage("Kiosk with IP address {IpAddr} and name {hostname} is shutted down")
             msg.set_content()
             msg['Subject'] = "Found issue in Kiosk"
-            msg['from'] = "enquiry.infabrands@gmail.com"
-            msg['To'] = "mohit.joshi@kudosware.com"
+            msg['from'] = "email"
+            msg['To'] = "email"
             s.send_message(msg)
             s.quit()
 
